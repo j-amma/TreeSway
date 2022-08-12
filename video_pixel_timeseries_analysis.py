@@ -8,21 +8,29 @@ import scipy.stats
 import cv2
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-def readvid_cv(fn, region, verbose=True):
+def readvid_cv(fn, region=None, verbose=True):
     """
     Uses opencv to read video region into array.
     
     Returns a 4-d array [num_frames, y, x, channel] and the video framerate
     
     fn : path to video
-    region : list [ymin, ymax, xmin, xmax]
+    region : defaults to None and reads whole frame, 
+             when specified: list [ymin, ymax, xmin, xmax] 
     verbose : when true, prints helpful progress messages
     """
     
-    ymin, ymax, xmin, xmax = region[0], region[1], region[2], region[3]
-    
     vid_capture = cv2.VideoCapture(fn)
     print('Open Successful: ', vid_capture.isOpened())
+    
+    ymin, ymax, xmin, xmax = [0, 0, 0, 0]
+    if region is None:
+        ymin = 0 
+        ymax = int(vid_capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        xmin = 0
+        xmax = int(vid_capture.get(cv2.CAP_PROP_FRAME_WIDTH))
+    else:
+        ymin, ymax, xmin, xmax = region[0], region[1], region[2], region[3]
     
     num_frame = int(vid_capture.get(cv2.CAP_PROP_FRAME_COUNT))
     fps = vid_capture.get(cv2.CAP_PROP_FPS)
