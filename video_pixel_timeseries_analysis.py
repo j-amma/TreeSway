@@ -8,6 +8,35 @@ import scipy.stats
 import cv2
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+import UncompressVid as uv
+
+def readvid_vreader(fn, region=None):
+    """
+    Uses custom ffmpeg wrapper to read video region into array.
+    
+    Returns a 4-d array [num_frames, y, x, channel] and the video framerate
+    
+    fn : path to video
+    region : list [ymin, ymax, xmin, xmax]
+    """
+    
+    vid_reader = uv.UncompressVid(fn)
+    fps = vid_reader.get_fps()
+    resolution = vid_reader.get_resolution()
+    
+    ymin, ymax, xmin, xmax = [0, 0, 0, 0]
+    if region is None:
+        ymin = 0 
+        ymax = int(resolution[0])
+        xmin = 0
+        xmax = int(resolution[1])
+    else:
+        ymin, ymax, xmin, xmax = region[0], region[1], region[2], region[3]
+    
+    vid = vid_reader.convert_to_arr(ymin, ymax, xmin, xmax)
+    
+    return vid, fps
+
 def readvid_cv(fn, region=None, verbose=True):
     """
     Uses opencv to read video region into array.
