@@ -1,5 +1,4 @@
 import numpy as np
-import cv2
 from argparse import ArgumentParser
 import matplotlib.pyplot as plt
 import video_pixel_timeseries_analysis as vptsa  # module with custom processing functions
@@ -33,7 +32,7 @@ def main():
     vid_name = vid_fn.split('/')[-1].split('.')[0]
 
     # read video into array (whole frame)
-    vid, fps = vptsa.readvid_cv(vid_fn, region=REGION)
+    vid, fps = vptsa.readvid_vreader(vid_fn, region=REGION)
     
     # compute pixel spectrums
     freq, pxx = vptsa.get_pixel_spectrums(vid, fps, FREQMIN, FREQMAX, window=WINDOW)
