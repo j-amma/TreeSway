@@ -150,7 +150,6 @@ def get_pixel_spectrums(pixts, fps, freqmin, freqmax, channel='r', window='boxca
                                         detrend=detrend, 
                                         axis=0)
         pxx = np.zeros([len(p), pixts_iso.shape[1], pixts_iso.shape[2]])
-        print(pxx.shape)
         
         if verbose:
             print('Computing spectrums for row:')
