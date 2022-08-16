@@ -116,7 +116,7 @@ def findNextPowerOf2(n):
  
     return k
         
-def get_pixel_spectrums(pixts, fps, freqmin, freqmax, channel='r', window='boxcar', detrend='constant'):
+def get_pixel_spectrums(pixts, fps, freqmin, freqmax, channel='r', window='boxcar', detrend='constant', conserve_mem=False, verbose=True):
     """
     Computes spectrum for each pixel time series, performs frequency thresholding.
     
@@ -133,13 +133,50 @@ def get_pixel_spectrums(pixts, fps, freqmin, freqmax, channel='r', window='boxca
     window : window to apply to time series prior to fft
     detrend : string, see scipy.signal.periodogram for details
     """
+    if verbose:
+        print('Computing pixel spectrums')
     
     pixts_iso = isolate_channel(pixts, 'r')
     
-    # get frequency of whole frame
     next_pow2 = findNextPowerOf2(len(pixts[:,0,0]))
-    freq, pxx = scipy.signal.periodogram(pixts_iso, fps, window='boxcar', nfft=next_pow2, detrend='constant', axis=0)
-
+    
+    # compute pixel spectrums
+    if conserve_mem:
+        # if memory constrained, do one row at a time
+        f, p = scipy.signal.periodogram(pixts_iso[:, 0, 0], 
+                                        fps, 
+                                        window=window, 
+                                        nfft=next_pow2, 
+                                        detrend=detrend, 
+                                        axis=0)
+        pxx = np.zeros([len(p), pixts_iso.shape[1], pixts_iso.shape[2]])
+        print(pxx.shape)
+        
+        if verbose:
+            print('Computing spectrums for row:')
+        for row in range(pixts_iso.shape[1]):
+            if verbose:
+                sys.stdout.write('\r{0}'.format(row))
+                sys.stdout.flush()
+                
+            freq, pxx[:,row,:] = scipy.signal.periodogram(pixts_iso[:, row, :], 
+                                                      fps, 
+                                                      window=window, 
+                                                      nfft=next_pow2, 
+                                                      detrend=detrend, 
+                                                      axis=0)
+        if (verbose):
+            print('\nFinished computing spectrums')
+    else:
+        freq, pxx = scipy.signal.periodogram(pixts_iso, 
+                                             fps, 
+                                             window=window, 
+                                             nfft=next_pow2, 
+                                             detrend=detrend, 
+                                             axis=0)
+        if (verbose):
+            print('Finished computing spectrums')
+     
     # filter by freq range
     low = np.where(freq > freqmin)[0][0]
     high = np.where(freq > freqmax)[0][0]
