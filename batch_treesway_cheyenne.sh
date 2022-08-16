@@ -1,32 +1,28 @@
 #!/bin/bash
-#PBS -N treesway_batch
-#PBS -A TODO --> specify account
-#PBS -l walltime=00:20:00
+#PBS -N <job_name>
+#PBS -A <account id>
+#PBS -l walltime=<hh:mm:ss>
 #PBS -q regular
 #PBS -j oe
 #PBS -k eod
-
-### TODO: customize resources
 #PBS -l select=2:ncpus=10:mpiprocs=10:ompthreads=1
-
-### Send email on abort, begin and end
 #PBS -m abe
-### Specify mail recipient
-#PBS -M TODO --> email address
+#PBS -M <email>
 
 ### Set TMPDIR as recommended
 export TMPDIR=/glade/scratch/$USER/temp
 mkdir -p $TMPDIR
 
-# setup python environment
+# set up conda environment
 module load conda/latest
-# TODO: activate custom conda environment
+conda activate treesway
 
-# load GNU parallel
-module load parallel/20190622
+OUTPUT_DIR=<output_dir>
+mkdir -p $OUTPUT_DIR
 
-export OMP_NUM_THREADS=1
-
-OUTPUT_DIR=batch_frequency_output
-
-parallel -a python3 treesway_vidproc.py {1} $OUTPUT_DIR :::: treesway_video_paths.txt
+# Process each video in file segment
+echo "Processing segments"
+while read VIDEO; do
+  echo "Processing $VIDEO"
+  python3 treesway_vidproc.py $VIDEO $OUTPUT_DIR
+done < $1
