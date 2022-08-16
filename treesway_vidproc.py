@@ -35,7 +35,7 @@ def main():
     vid, fps = vptsa.readvid_vreader(vid_fn, region=REGION)
     
     # compute pixel spectrums
-    freq, pxx = vptsa.get_pixel_spectrums(vid, fps, FREQMIN, FREQMAX, window=WINDOW)
+    freq, pxx = vptsa.get_pixel_spectrums(vid, fps, FREQMIN, FREQMAX, window=WINDOW, conserve_mem=False)
     
     # save arrays
     np.save(f'{output_prefix}{vid_name}_freq', freq)
