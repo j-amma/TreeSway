@@ -274,6 +274,6 @@ def get_freq_specs(peak_freq, peak_freq_masked):
     
     data = [unmasked, masked]
     
-    stats_df = pd.DataFrame(data, ['Unmasked Peak Frequencies', 'Masked Peak Frequencies'], ['mean', 'median', 'mode'])
+    stats_df = pd.DataFrame(data, ['unmasked', 'masked'], ['mean', 'median', 'mode'])
 
     return stats_df
