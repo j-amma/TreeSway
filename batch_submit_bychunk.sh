@@ -20,5 +20,5 @@ split -l $LINES_PER_FILE $1 $SEGMENT_DIR$SEGMENT_PREFIX
 for FILE in $SEGMENT_DIR*; 
 do 
     # submit NCAR Bash script
-    bash treesway_submit_cheyenne.sh $FILE
+    qsub -v "INPUT_FILE=$FILE" treesway_submit_cheyenne.sh
 done
