@@ -25,4 +25,4 @@ echo "Processing segments"
 while read VIDEO; do
   echo "Processing $VIDEO"
   python3 treesway_vidproc.py $VIDEO $OUTPUT_DIR
-done < $1
+done < $INPUT_FILE
