@@ -12,7 +12,7 @@ NUM_NODES=3
 
 # Create new file segment for each node
 NUM_LINES=$(wc -l < $1)
-LINES_PER_FILE=$(($NUM_LINES / $NUM_NODES))
+LINES_PER_FILE=$(($NUM_LINES / $NUM_NODES + 1))
 
 split -l $LINES_PER_FILE $1 $SEGMENT_DIR$SEGMENT_PREFIX
 
